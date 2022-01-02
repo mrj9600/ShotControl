@@ -1,0 +1,17 @@
+{
+  "name": "Shot control web edition",
+  "short_name": "ShotControl",
+  "theme_color": "#1976d2",
+  "background_color": "#fafafa",
+  "display": "standalone",
+  "scope": "./",
+  "start_url": "./",
+  "icons": [
+    {
+      "src": "assets/icons/archer.png",
+      "sizes": "748x986",
+      "type": "image/png",
+      "purpose": "maskable any"
+    }
+  ]
+}

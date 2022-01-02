@@ -1,0 +1,39 @@
+.content {
+    display       : flex;
+    flex-direction: column;
+    max-width     : 250px;
+    margin        : 8px;
+}
+
+.settings {
+    display       : flex;
+    flex-direction: column;
+}
+
+.row {
+    display       : flex;
+    flex-direction: row;
+}
+
+.row-label {
+    margin: 0 8px 0 0;
+}
+
+.buttons {
+    display        : flex;
+    flex-direction : row;
+    justify-content: center;
+}
+
+.buttons .mat-button-base {
+    margin: 8px 8px 8px 0;
+}
+
+
+.shoot {
+    background-color: green;
+}
+
+.dont-shoot {
+    background-color: red;
+}
