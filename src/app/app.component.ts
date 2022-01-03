@@ -6,7 +6,7 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'Shot Control';
+  title = 'Shot Control - v1';
 
   prepareTime$: number = +(localStorage.getItem('prepareTime') || 20);
   shouldAnnounce$: boolean = (localStorage.getItem('announceTime') === 'true') || true;
@@ -28,19 +28,19 @@ export class AppComponent {
 
   constructor() {
     this.getReadySound = new Audio();
-    this.getReadySound.src = "./assets/sounds/get_ready.mp3";
+    this.getReadySound.src = "./assets/sounds/get_ready.wav";
     this.getReadySound.load();
 
     this.drawSound = new Audio();
-    this.drawSound.src = "./assets/sounds/draw.mp3";
+    this.drawSound.src = "./assets/sounds/draw.wav";
     this.drawSound.load();
 
     this.shootSound = new Audio();
-    this.shootSound.src = "./assets/sounds/shoot.mp3";
+    this.shootSound.src = "./assets/sounds/shoot.wav";
     this.shootSound.load();
 
     this.dontShootSound = new Audio();
-    this.dontShootSound.src = "./assets/sounds/dont_shoot.mp3";
+    this.dontShootSound.src = "./assets/sounds/dont_shoot.wav";
     this.dontShootSound.load();
   }
 
