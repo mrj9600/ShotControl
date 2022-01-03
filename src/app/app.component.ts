@@ -6,7 +6,7 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'ShotControl';
+  title = 'Shot Control';
 
   prepareTime$: number = +(localStorage.getItem('prepareTime') || 20);
   shouldAnnounce$: boolean = (localStorage.getItem('announceTime') === 'true') || true;
