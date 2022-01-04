@@ -7,13 +7,15 @@
       <span matSuffix>secs</span>
     </mat-form-field>
 
-    <mat-checkbox class="example-margin" [(ngModel)]="shouldAnnounce">Announce get ready</mat-checkbox>
+    <mat-checkbox [(ngModel)]="shouldAnnounce">Announce get ready</mat-checkbox>
+    <mat-checkbox [(ngModel)]="announceTicks">Announce ticks</mat-checkbox>
     <mat-form-field>
       <mat-label>Announce time</mat-label>
       <input matInput type="number" max="{{prepareTime}}" [(ngModel)]="announceTime" />
       <span matSuffix>secs</span>
     </mat-form-field>
 
+    <mat-checkbox [(ngModel)]="drawAndAnchorTicks">Draw and anchor ticks</mat-checkbox>
     <mat-form-field>
       <mat-label>Draw and anchor time</mat-label>
       <input matInput type="number" min="1" [(ngModel)]="drawTime" />

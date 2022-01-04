@@ -1,13 +1,15 @@
 .content {
     display       : flex;
     flex-direction: column;
-    max-width     : 250px;
+    max-width     : 300px;
     margin        : 8px;
+    height        : calc(100vh - 16px);
 }
 
 .settings {
     display       : flex;
     flex-direction: column;
+    overflow      : auto;
 }
 
 .row {

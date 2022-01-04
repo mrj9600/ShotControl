@@ -6,11 +6,13 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'Shot Control - v2';
+  title = 'Shot Control';
 
   prepareTime$: number = +(localStorage.getItem('prepareTime') || 20);
-  shouldAnnounce$: boolean = (localStorage.getItem('announceTime') === 'true') || true;
+  shouldAnnounce$: boolean = (localStorage.getItem('shouldAnnounce') || 'true') === 'true';
+  announceTicks$: boolean = (localStorage.getItem('announceTicks') || 'true') === 'true';
   announceTime$: number = +(localStorage.getItem('announceTime') || 3);
+  drawAndAnchorTicks$: boolean = (localStorage.getItem('drawAndAnchorTicks') || 'true') === 'true';
   drawTime$: number = +(localStorage.getItem('drawTime') || 5.5);
   shotPercentage$: number = +(localStorage.getItem('shotPercentage') || 75);
 
@@ -24,7 +26,10 @@ export class AppComponent {
   @ViewChild('player')
   player!: ElementRef;
 
-  constructor() { }
+  constructor() { 
+    this.shouldAnnounce$ = (localStorage.getItem('shouldAnnounce') || 'true') === 'true';
+    console.log('shouldAnnounce', this.shouldAnnounce$);
+  }
 
   get prepareTime(): number {
     return this.prepareTime$;
@@ -54,6 +59,26 @@ export class AppComponent {
     this.shouldAnnounce$ = value;
 
     localStorage.setItem('shouldAnnounce', '' + value)
+  }
+
+  get announceTicks(): boolean {
+    return this.announceTicks$;
+  }
+
+  set announceTicks(value: boolean) {
+    this.announceTicks$ = value;
+
+    localStorage.setItem('announceTicks', '' + value)
+  }
+
+  get drawAndAnchorTicks(): boolean {
+    return this.drawAndAnchorTicks$;
+  }
+
+  set drawAndAnchorTicks(value: boolean) {
+    this.drawAndAnchorTicks$ = value;
+
+    localStorage.setItem('drawAndAnchorTicks', '' + value)
   }
 
   get drawTime(): number {
@@ -124,12 +149,10 @@ export class AppComponent {
         this.action = undefined;
       }
 
-      if (this.shouldAnnounce$) {
-        if (this.countDown === this.announceTime) {
-          this.play('get_ready');
-        } else if (this.countDown < this.announceTime) {
-          this.playTick();
-        }
+      if (this.shouldAnnounce$ && this.countDown === this.announceTime) {
+        this.play('get_ready');
+      } else if (this.announceTicks$ && this.countDown <= this.announceTime) {
+        this.playTick();
       }
 
       this.timer = setTimeout(() => this.startTimer(), 1000);
@@ -145,7 +168,10 @@ export class AppComponent {
           if (this.countDown) {
             this.countDown = (10 * this.countDown - 10) / 10;
           }
-          this.playTick();
+
+          if (this.drawAndAnchorTicks$) {
+            this.playTick();
+          }
           this.startTimer();
         }, 1000);
 
