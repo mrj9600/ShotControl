@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-root',
@@ -6,7 +6,7 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'Shot Control - v1';
+  title = 'Shot Control - v2';
 
   prepareTime$: number = +(localStorage.getItem('prepareTime') || 20);
   shouldAnnounce$: boolean = (localStorage.getItem('announceTime') === 'true') || true;
@@ -21,28 +21,10 @@ export class AppComponent {
   timer: any;
   countDown: number | undefined;
 
-  getReadySound: HTMLAudioElement;
-  drawSound: HTMLAudioElement;
-  shootSound: HTMLAudioElement;
-  dontShootSound: HTMLAudioElement;
+  @ViewChild('player')
+  player!: ElementRef;
 
-  constructor() {
-    this.getReadySound = new Audio();
-    this.getReadySound.src = "./assets/sounds/get_ready.wav";
-    this.getReadySound.load();
-
-    this.drawSound = new Audio();
-    this.drawSound.src = "./assets/sounds/draw.wav";
-    this.drawSound.load();
-
-    this.shootSound = new Audio();
-    this.shootSound.src = "./assets/sounds/shoot.wav";
-    this.shootSound.load();
-
-    this.dontShootSound = new Audio();
-    this.dontShootSound.src = "./assets/sounds/dont_shoot.wav";
-    this.dontShootSound.load();
-  }
+  constructor() { }
 
   get prepareTime(): number {
     return this.prepareTime$;
@@ -94,9 +76,22 @@ export class AppComponent {
     localStorage.setItem('shotPercentage', '' + value)
   }
 
+  private play(file: string) {
+    this.player.nativeElement.src = './assets/sounds/' + file + '.mp3';
+    this.player.nativeElement.play();
+  }
+
+  private playTick() {
+    this.player.nativeElement.src = "data:audio/mpeg;base64,//sQxAAAA+i5OrQRABC9mG+3BCAACCAH/f//yE5z0Od/yf//ITnO853/O9CEIygAgEPg+8AAUWCwVioVCAEBgAAD/65xat0KnkqrfOEKkxfjOI6H//Ofpf/q8jZTBgc8uM4jcsMMMMH/+xLEAgAE6M1XGCKAAAAANIOAAAQIAADL6BfAW9DeJCI78xlb/EWEVL/6REV//0Uw0SMb//AY4ypMQU1FMy45OS4zqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqo=";
+    this.player.nativeElement.play();
+  }
+
   doStart() {
     if (this.stage === 'Stopped') {
       this.stage = 'Prepare';
+
+      this.player.nativeElement.src = "data:audio/mpeg;base64,SUQzBAAAAAABEVRYWFgAAAAtAAADY29tbWVudABCaWdTb3VuZEJhbmsuY29tIC8gTGFTb25vdGhlcXVlLm9yZwBURU5DAAAAHQAAA1N3aXRjaCBQbHVzIMKpIE5DSCBTb2Z0d2FyZQBUSVQyAAAABgAAAzIyMzUAVFNTRQAAAA8AAANMYXZmNTcuODMuMTAwAAAAAAAAAAAAAAD/80DEAAAAA0gAAAAATEFNRTMuMTAwVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQsRbAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQMSkAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV";
+      this.player.nativeElement.play();
 
       this.startTimer();
     }
@@ -129,31 +124,49 @@ export class AppComponent {
         this.action = undefined;
       }
 
-      if (this.shouldAnnounce$ && this.countDown === this.announceTime) {
-        this.getReadySound.play();
+      if (this.shouldAnnounce$) {
+        if (this.countDown === this.announceTime) {
+          this.play('get_ready');
+        } else if (this.countDown < this.announceTime) {
+          this.playTick();
+        }
       }
 
       this.timer = setTimeout(() => this.startTimer(), 1000);
     } else {
-      this.stage = 'Draw';
-      this.countDown = undefined;
+      if (this.stage === 'Prepare') {
+        this.stage = 'Draw';
+        this.countDown = this.drawTime;
+        this.play('draw');
+      }
 
-      this.drawSound.play();
-      this.timer = setTimeout(() => {
-        const shotNumber = 100 * Math.random();
+      if (this.countDown && this.countDown > 1) {
+        this.timer = setTimeout(() => {
+          if (this.countDown) {
+            this.countDown = (10 * this.countDown - 10) / 10;
+          }
+          this.playTick();
+          this.startTimer();
+        }, 1000);
 
-        this.action = shotNumber < this.shotPercentage ? 'Shoot' : 'Let down';
+      } else {
+        this.timer = setTimeout(() => {
+          const shotNumber = 100 * Math.random();
 
-        if (this.action === 'Shoot') {
-          this.shootSound.play();
-        } else {
-          this.dontShootSound.play();
-        }
+          this.action = shotNumber < this.shotPercentage ? 'Shoot' : 'Let down';
 
-        this.stage = 'Prepare';
+          if (this.action === 'Shoot') {
+            this.play('shoot');
+          } else {
+            this.play('dont_shoot');
+          }
 
-        this.startTimer();
-      }, this.drawTime * 1000);
+          this.stage = 'Prepare';
+          this.countDown = undefined;
+
+          this.startTimer();
+        }, (this.countDown || 1) * 1000);
+      }
     }
   }
 }

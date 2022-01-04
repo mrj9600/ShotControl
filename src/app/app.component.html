@@ -33,7 +33,7 @@
       <div>{{stage}}</div>
     </div>
     <div class="row">
-      <label class="row-label">Prepare countdown:</label>
+      <label class="row-label">Countdown:</label>
       <div>{{countDown}}</div>
     </div>
 
@@ -44,6 +44,7 @@
 
   </div>
 
+  <audio #player></audio>
   <div class="buttons">
     <button mat-raised-button color="primary" (click)="doStart()" [disabled]="stage !== 'Stopped'">Start</button>
     <button mat-raised-button color="warn" (click)="doStop()" [disabled]="stage === 'Stopped'">Stop</button>
